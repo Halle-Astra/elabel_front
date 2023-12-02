@@ -2,14 +2,14 @@ import Vue from 'vue';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import App from './App.vue';
-import header from "./components/header.vue";
+import navi from "./components/navi.vue";
 // import headers from  './headers.js';
 import mainPanel from "./components/mainPanel.vue";
 Vue.use(ElementUI);
-Vue.use(header);
-Vue.use(mainPanel);
-// Vue.component(header);
-// Vue.component(mainPanel);
+// Vue.use(navi);
+// Vue.use(mainPanel);
+Vue.component('navi',navi);  //这才是正确的组件注册方式，一定不能单纯的写一个Vue.component(navi) https://blog.csdn.net/yxf0448/article/details/132822591
+Vue.component('mainPanel',mainPanel);
 // export default {
 //   data() {
 //     return{
@@ -22,7 +22,7 @@ export default {
     return {};
   },
   components:{
-    header,
+    navi,
     mainPanel
   }
 };

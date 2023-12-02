@@ -1,19 +1,41 @@
 <template>
   <el-header>
     <el-row id="navi" :gutter="10">
-      <el-col v-for="header in headers"  :key="header.name"  :span="2">
+      <el-col v-for="header in headers"  :key="header.name" span=2>
         <el-card shadow="hover">  <a v-bind:href="header.href">{{header.name}}</a></el-card>
       </el-col>
     </el-row>
   </el-header>
 </template>
 
-<script  src="./header.js">
+<script>
+export default{
+  data(){
+    return {
+      headers
+      }
+    },
+  name:'navi'
+}
+
+// 定义头栏目需要的信息
+  const headers=[
+    {
+      "name": "主页",
+      "href": "https://love-meiyan.cn"
+    },
+    {
+      "name":"此页",
+      href:"https://v.mathmodelling.cn"
+    }];
+
+
+
 </script>
 
 <style>
   #navi {
-    background-color: #409EFF;
+    /* background-color: #409EFF; */
 
   }
   #navi   .el-card{
