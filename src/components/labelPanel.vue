@@ -68,32 +68,15 @@
         var image_helper = this.$refs.img_label_panel1;
         var canvas_element = this.$refs.label_panel_canvas;
         console.log('the image helper ', image_helper);
-        // console.log('the value of props is '+props)
         var img = new Image();
         img.src = this.src; // 这一行是核心代码
         img.onload = function() {
           console.log($("canvas"))
-          // console.log("the value of canvas is ", img)
           var original_height = this.height;
           var original_width = this.width;
-          // console.log("the value of height is "+ original_height);
-          // var canvas_element = $("canvas")[0];
-          // var canvas_element =
-          // canvas_element.height = original_height;
-          // canvas_element.width = original_width;
-
-          // resize the image
-          // var image_helper = $("img")[0];
-          // var image_helper = ;
           var container_element = image_helper.parentElement;
-          // console.log('the value of original height '+original_height);
-          // console.log('the value of original width '+original_width);
-          // console.log('the value of container, ');
-          // console.log(container_element);
           var container_height = container_element.clientHeight;
           var container_width = container_element.clientWidth;
-          // console.log("the value of container_height "+container_height);
-          // console.log('the value of container width '+container_width);
           var container_hwratio = container_height/container_width;
           var original_hwratio = original_height/original_width;
           var resized_height = 0;
@@ -105,18 +88,11 @@
             resized_width = container_width;
             resized_height = resized_width * original_hwratio;
           }
-          // image_helper.height = resized_height;
-          // image_helper.width = resized_width;
           img.style.height = resized_height+'px';
           img.style.width = resized_width+'px';
-          // console.log('the height of img '+img.clientHeight);
-          // console.log("the height of resized_height "+ resized_height);
-          // console.log('the width of resized_width '+ resized_width);
-
           canvas_element.height = resized_height;
           canvas_element.width = resized_width;
 
-          // $("canvas")[0].getContext('2d').drawImage(image_helper, 0,0, resized_width, resized_height);
           canvas_element.getContext('2d').drawImage(image_helper, 0,0, resized_width, resized_height);
         }
       },
@@ -156,7 +132,8 @@
         ctx.closePath();
         console.log($('body')[0])
         // $('body')[0].classList.remove('cannot_select');
-      }
+      },
+
     },
     computed:{
       root_class (){
@@ -167,17 +144,14 @@
   }
 
 
-
-  // $("#img_label_panel1").change = function (){
-  //   console.log('the value of props is '+props)
-  //   var img = new Image();
-  //   img.src = props["src"];
-  //   img.onload = function() {
-  //     $("canvas")[0].draw_img(img, 0,0);
-  //     console.log("the value of canvas is ", img)
-  //   }
-  // }
-
+function is_in_points(point,points_set){
+  let point_site = points_set.indexOf(point);
+  let is_in = false;
+  if (point_site > -1){
+    is_in = true;
+  }
+  return is_in;
+}
 
 
 
