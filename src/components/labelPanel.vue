@@ -20,8 +20,7 @@
 
 <script>
   var EasyArray =class {
-    constructor(value){
-      console.log('the value is '+value);
+    constructor(value=[]){
       if (typeof(value)==='string'){
         value = value.split(' ');
       }
@@ -32,14 +31,16 @@
     }
     remove(item){
       var site = this.value.indexOf(item);
-      console.log('the site of item ', item, 'is ', site);
       if (site > -1){
         this.value.splice(site,1);
       }
-      console.log('the value now is ',this.value);
     }
     toString(){
       return this.value.join(" ");
+    }
+    indexOf(item,positive){
+      var index = this.value.indexOf(item);
+      return index;
     }
   }
 
@@ -49,10 +50,11 @@
     data(){
       return {
         EasyArray,
-        fig_points:{
-          pos_points: [],
-          neg_points: []
-        }
+        label_params:{
+          pos_points: new EasyArray([]),
+          neg_points: new EasyArray([])
+        },
+        image_wo_label:null
       }
     },
     props: {
@@ -67,11 +69,9 @@
       canvas_show (){
         var image_helper = this.$refs.img_label_panel1;
         var canvas_element = this.$refs.label_panel_canvas;
-        console.log('the image helper ', image_helper);
         var img = new Image();
         img.src = this.src; // 这一行是核心代码
         img.onload = function() {
-          console.log($("canvas"))
           var original_height = this.height;
           var original_width = this.width;
           var container_element = image_helper.parentElement;
@@ -94,46 +94,60 @@
           canvas_element.width = resized_width;
 
           canvas_element.getContext('2d').drawImage(image_helper, 0,0, resized_width, resized_height);
+          this.image_wo_label = canvas_element.getContext('2d').getImageData(0,0, resized_width, resized_height);
         }
       },
       add_pos(point_event){
         $('body')[0].classList.add('cannot_select');
-        var canvas_element = this.$refs.label_panel_canvas;
+
         const x = point_event.offsetX;
         const y = point_event.offsetY;
+        if (!is_in_points([x,y], this.label_params.pos_points)){
+          this.label_params.pos_points.add([x,y]);
+        }
+        while (is_in_points([x,y], this.label_params.neg_points)){
+          this.label_params.neg_points.remove([x,y]);
+        }
+        // var canvas_element = this.$refs.label_panel_canvas;
+
+        // let ctx = canvas_element.getContext('2d');
+        // this.canvas_show();
+        var canvas_element = this.$refs.label_panel_canvas;
         let ctx = canvas_element.getContext('2d');
-        ctx.fillStyle = "rgba(0,255,0,0.5)"
-        ctx.beginPath();
-        ctx.arc(x,y, 2,0,2*Math.PI);  //arc+stroke就可以实现多边形绘制了
-        // ctx.stroke();
-        ctx.fill();
-        ctx.closePath();
+        this.canvas_draw_points(ctx);
 
       },
       add_neg(point_event){
-        var canvas_element = this.$refs.label_panel_canvas;
+        // var canvas_element = this.$refs.label_panel_canvas;
         const x = point_event.offsetX;
         const y = point_event.offsetY;
+        // let ctx = canvas_element.getContext('2d');
+        while (is_in_points([x,y], this.label_params.pos_points)){
+          this.label_params.pos_points.remove([x,y]);
+        }
+        if (!is_in_points([x,y], this.label_params.neg_points)){
+          this.label_params.neg_points.add([x,y]);
+        }
+        // this.canvas_show();
+
+        var canvas_element = this.$refs.label_panel_canvas;
         let ctx = canvas_element.getContext('2d');
-        ctx.fillStyle = "rgba(255,255,255,1)";
-        ctx.beginPath();
-        ctx.arc(x,y, 2,0,2*Math.PI);  //arc+stroke就可以实现多边形绘制了
-        // ctx.stroke();
-        ctx.fill();
-        ctx.closePath();
-        console.log($('body')[0])
-        // $('body')[0].classList.remove('cannot_select');
-
-        ctx.fillStyle = "rgba(255,0,0,0.8)";
-        ctx.beginPath();
-        ctx.arc(x,y, 2,0,2*Math.PI);  //arc+stroke就可以实现多边形绘制了
-        // ctx.stroke();
-        ctx.fill();
-        ctx.closePath();
-        console.log($('body')[0])
-        // $('body')[0].classList.remove('cannot_select');
+        this.canvas_draw_points(ctx);
       },
-
+      canvas_draw_points(ctx){
+        var points = this.label_params.pos_points.value;
+        for(var i=0; i<points.length;i++){
+          var point = points[i];
+          draw_dot(ctx, point[0], point[1],'g');
+        }
+        var points = this.label_params.neg_points.value;
+        for (var i=0; i<points.length;i++){
+          var point = points[i];
+        //for (let point in this.label_params.neg_points.value){
+          draw_dot(ctx, point[0], point[1], 'r');
+        }
+        console.log('执行结束， 现在的点集是', this.label_params)
+      }
     },
     computed:{
       root_class (){
@@ -150,9 +164,26 @@ function is_in_points(point,points_set){
   if (point_site > -1){
     is_in = true;
   }
+  console.log('the value of point, is ', point)
+  console.log('the value of is_in,' ,is_in)
+  console.log('the value of point_site', point_site);
+  console.log('the value of points_set', points_set)
   return is_in;
 }
 
+function draw_dot(ctx, x,y,color='r',r=3){
+  if (color === 'r'){
+    color = "rgba(255,0,0,0.8)";
+  }  else if(color==='g') {
+    color = "rgba(0,255,0,0.5)"
+  }
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(x,y, r,0,2*Math.PI);  //arc+stroke就可以实现多边形绘制了
+  // ctx.stroke();
+  ctx.fill();
+  ctx.closePath();
+}
 
 
 </script>
@@ -175,7 +206,8 @@ function is_in_points(point,points_set){
 }
 
 .cannot_select {
-  -ms-user-select: none;
+  -ms-user-select: none; /*对chrome无效*/
+  user-select: none; /*这个是目前对chrome来讲有效的*/
 }
 
 </style>
