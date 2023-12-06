@@ -45,6 +45,8 @@
   }
 
   import $ from "jquery"
+  import "../assets/js/cv_dev.js"
+  console.log(findIndexIsNotZero)
 
   export default{
     data(){
@@ -124,7 +126,7 @@
         if (!is_in_points([x,y], this.label_params.neg_points)){
           this.label_params.neg_points.add([x,y]);
         }
-        // this.canvas_show();
+        // this.canvas_show();  // 详见Bug1
 
         var canvas_element = this.$refs.label_panel_canvas;
         let ctx = canvas_element.getContext('2d');
