@@ -108,10 +108,6 @@
         while (is_in_points([x,y], this.label_params.neg_points)){
           this.label_params.neg_points.remove([x,y]);
         }
-        // var canvas_element = this.$refs.label_panel_canvas;
-
-        // let ctx = canvas_element.getContext('2d');
-        // this.canvas_show();
         var canvas_element = this.$refs.label_panel_canvas;
         let ctx = canvas_element.getContext('2d');
         this.canvas_draw_points(ctx);
