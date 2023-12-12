@@ -19,6 +19,10 @@
 </template>
 
 <script>
+  function isSame(item1, item2){
+    return item1.toString()===item2.toString();
+  }
+
   var EasyArray =class {
     constructor(value=[]){
       if (typeof(value)==='string'){
@@ -35,18 +39,34 @@
         this.value.splice(site,1);
       }
     }
+    removeByIndex(site){
+      if (site > -1){
+        this.value.splice(site,1);
+      }
+    }
     toString(){
       return this.value.join(" ");
     }
     indexOf(item,positive){
       var index = this.value.indexOf(item);
+
+      // 针对对象元素的情况， 比如array
+      var index2=-1;
+      for (let ii =0;ii<this.value.length;ii++){
+        console.log('kkkk',this.value.length)
+        let t_i=this.value[ii];
+        if(isSame(t_i,item)){
+          index2=ii;
+        }
+      }
+      index=Math.max(index,index2);
       return index;
     }
   }
 
   import $ from "jquery"
-  import "../assets/js/cv_dev.js"
-  console.log(findIndexIsNotZero)
+  // import '../assets/js/cv_dev.js'
+  // console.log(findIndexIsNotZero)
 
   export default{
     data(){
@@ -104,11 +124,19 @@
 
         const x = point_event.offsetX;
         const y = point_event.offsetY;
+        // 简单的增加样本点可以用[x,y]，因为不涉及索引问题
         if (!is_in_points([x,y], this.label_params.pos_points)){
           this.label_params.pos_points.add([x,y]);
+          console.log('正样本添加')
         }
-        while (is_in_points([x,y], this.label_params.neg_points)){
-          this.label_params.neg_points.remove([x,y]);
+
+        // 删除时必须要用索引
+        let point = [x,y];
+        let site_point_in_neg = this.label_params.neg_points.indexOf(point);
+        while (site_point_in_neg>-1){
+          this.label_params.neg_points.removeByIndex(site_point_in_neg);
+          site_point_in_neg = this.label_params.neg_points.indexOf(point);
+          console.log('负样本删除')
         }
         var canvas_element = this.$refs.label_panel_canvas;
         let ctx = canvas_element.getContext('2d');
@@ -120,11 +148,18 @@
         const x = point_event.offsetX;
         const y = point_event.offsetY;
         // let ctx = canvas_element.getContext('2d');
-        while (is_in_points([x,y], this.label_params.pos_points)){
-          this.label_params.pos_points.remove([x,y]);
-        }
+
         if (!is_in_points([x,y], this.label_params.neg_points)){
           this.label_params.neg_points.add([x,y]);
+          console.log('负样本增加')
+        }
+
+        let point = [x,y];
+        let site_point_in_pos = this.label_params.pos_points.indexOf(point);
+        while (site_point_in_pos>-1){
+          this.label_params.pos_points.removeByIndex(site_point_in_pos);
+          site_point_in_pos = this.label_params.pos_points.indexOf(point);
+          console.log('正样本删除')
         }
         // this.canvas_show();  // 详见Bug1
 
@@ -182,6 +217,7 @@ function draw_dot(ctx, x,y,color='r',r=3){
   ctx.fill();
   ctx.closePath();
 }
+
 
 
 </script>
