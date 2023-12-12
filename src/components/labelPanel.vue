@@ -53,7 +53,7 @@
       // 针对对象元素的情况， 比如array
       var index2=-1;
       for (let ii =0;ii<this.value.length;ii++){
-        console.log('kkkk',this.value.length)
+        // console.log('kkkk',this.value.length)
         let t_i=this.value[ii];
         if(isSame(t_i,item)){
           index2=ii;
@@ -91,8 +91,10 @@
       canvas_show (){
         var image_helper = this.$refs.img_label_panel1;
         var canvas_element = this.$refs.label_panel_canvas;
+        let image_wo_label = this.image_wo_label;
         var img = new Image();
         img.src = this.src; // 这一行是核心代码
+        var origin = this; // 666， 突发奇想，竟然解决了
         img.onload = function() {
           var original_height = this.height;
           var original_width = this.width;
@@ -116,7 +118,9 @@
           canvas_element.width = resized_width;
 
           canvas_element.getContext('2d').drawImage(image_helper, 0,0, resized_width, resized_height);
-          this.image_wo_label = canvas_element.getContext('2d').getImageData(0,0, resized_width, resized_height);
+          image_wo_label = canvas_element.getContext('2d').getImageData(0,0, resized_width, resized_height);
+          // console.log('this image label', image_wo_label);
+          origin.set_image_wo_label(image_wo_label);
         }
       },
       add_pos(point_event){
@@ -168,6 +172,11 @@
         this.canvas_draw_points(ctx);
       },
       canvas_draw_points(ctx){
+        //既然都已经所有点都重绘了，不如就干脆一开始就重绘原图
+        var canvas_element = this.$refs.label_panel_canvas;
+        canvas_element.getContext('2d').putImageData(this.image_wo_label,0,0);
+
+
         var points = this.label_params.pos_points.value;
         for(var i=0; i<points.length;i++){
           var point = points[i];
@@ -179,7 +188,10 @@
         //for (let point in this.label_params.neg_points.value){
           draw_dot(ctx, point[0], point[1], 'r');
         }
-        console.log('执行结束， 现在的点集是', this.label_params)
+        console.log('执行结束， 现在的点集是=========', this.label_params)
+      },
+      set_image_wo_label(image_wo_label){
+        this.image_wo_label = image_wo_label;
       }
     },
     computed:{
