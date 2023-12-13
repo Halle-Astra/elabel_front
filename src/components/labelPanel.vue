@@ -1,6 +1,6 @@
 
 <template>
-<div :class="root_class">
+<div :class="root_class" @keyup.enter="start_label" tabindex='2'>
   <!-- 本组件中，这个元素将称为image_helper,起到辅助但重要的作用 -->
   <img :src="src" class="unvisible"  ref="img_label_panel1" @load="canvas_show"/>
 
@@ -10,6 +10,7 @@
       ref='label_panel_canvas'
       @click="add_pos"
       @dblclick="add_neg"
+
       >
 
     </canvas>
@@ -69,6 +70,12 @@
   // console.log(findIndexIsNotZero)
 
   export default{
+    created(){
+      // console.log('现有元素有',this.$refs)
+      // this.$refs.label_panel_canvas.onkeyup=function(e){
+      //   console.log(e)
+      // }
+    },
     data(){
       return {
         EasyArray,
@@ -188,10 +195,12 @@
         //for (let point in this.label_params.neg_points.value){
           draw_dot(ctx, point[0], point[1], 'r');
         }
-        console.log('执行结束， 现在的点集是=========', this.label_params)
       },
       set_image_wo_label(image_wo_label){
         this.image_wo_label = image_wo_label;
+      },
+      start_label(){
+        console.log('触发回车');
       }
     },
     computed:{
@@ -209,10 +218,7 @@ function is_in_points(point,points_set){
   if (point_site > -1){
     is_in = true;
   }
-  console.log('the value of point, is ', point)
-  console.log('the value of is_in,' ,is_in)
-  console.log('the value of point_site', point_site);
-  console.log('the value of points_set', points_set)
+
   return is_in;
 }
 
