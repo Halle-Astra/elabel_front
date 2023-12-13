@@ -200,7 +200,9 @@
         this.image_wo_label = image_wo_label;
       },
       start_label(){
-        console.log('触发回车');
+        // console.log('触发回车');
+        // console.log(imageData2dataUrl(this.image_wo_label));
+        img_b64 = imageData2dataUrl(this.image_wo_label);
       }
     },
     computed:{
@@ -236,6 +238,15 @@ function draw_dot(ctx, x,y,color='r',r=3){
   ctx.closePath();
 }
 
+function imageData2dataUrl(imageData){
+  let canvas_temp = document.createElement('canvas');
+  canvas_temp.height=imageData.height;
+  canvas_temp.width=imageData.width;
+  // console.log(canvas_temp, canvas_temp.height);
+
+  canvas_temp.getContext('2d').putImageData(imageData,0,0);
+  return canvas_temp.toDataURL();
+}
 
 
 </script>
