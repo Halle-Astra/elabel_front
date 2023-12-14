@@ -202,7 +202,22 @@
       start_label(){
         // console.log('触发回车');
         // console.log(imageData2dataUrl(this.image_wo_label));
-        img_b64 = imageData2dataUrl(this.image_wo_label);
+        let img_b64 = imageData2dataUrl(this.image_wo_label);
+        let data = {
+            image: img_b64,
+            pos_points : this.label_params.pos_points.value,
+            neg_points : this.label_params.neg_points.value
+          };
+        let data_obj = JSON.stringify(data);   // flask接收到json的核心代码，这样子，flask不能再使用request.values,而要使用request.json
+        $.ajax({
+          url:"http://localhost:5000/label.online/sam/upload",
+          type:'post',
+          // dataType:'json',
+          contentType:'application/json', // 为了保证flask里可以用request.json
+          data: data_obj,
+          success: function (e){console.log('ajax成功',e)}
+        })
+
       }
     },
     computed:{
