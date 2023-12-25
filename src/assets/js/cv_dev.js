@@ -22,3 +22,59 @@ function findIndicesAreNotZero(int8Array){
   // for (var i=index1;i)
 
 }
+
+
+
+
+function alphaBlend(image1, image2){
+
+}
+
+export async function b64_to_imageData(image_str){
+  // 此函数的传入必须自带data:image头
+  let image = document.createElement('img');
+  // image.style.display = "none";
+
+  // document.getElementsByTagName("div")[0].appendChild(image);
+  // image.onload = function(){
+  // }
+  let result = "";
+  let loaded_flag = false;
+  let promise_onload = new Promise(()=>{
+    image.onload = async function(){
+        let can_temp = document.createElement("canvas");
+        let ctx = can_temp.getContext('2d');
+        ctx.drawImage(image, 0,0, image.naturalWidth, image.naturalHeight);
+        let image_data = ctx.getImageData(0,0,image.width, image.height);
+        result = image_data;
+        loaded_flag=true;
+        console.log("原生的高度", image.naturalWidth, image.naturalHeight);
+      }
+  });
+
+
+  // image.onload = function(){ //https://segmentfault.com/q/1010000018951630
+  //   let can_temp = document.createElement("canvas");
+  //   let ctx = can_temp.getContext('2d');
+  //   ctx.drawImage(image, 0,0, image.naturalWidth, image.naturalHeight);
+  //   let image_data = ctx.getImageData(0,0,image.width, image.height);
+  //   result = image_data;
+  //   loaded_flag=true;
+  //   console.log("原生的高度", image.naturalWidth, image.naturalHeight);
+
+  // }
+  image.src = image_str;
+  await promise_onload;
+  return result;
+  // while (1){
+  //   if (loaded_flag){return result;}
+  // }
+  // let timer_temp = setInterval(function(){
+  //   if (loaded_flag){
+  //     return result;
+  //   }
+  // },20);
+
+
+}
+

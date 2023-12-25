@@ -70,6 +70,7 @@
   import $ from "jquery"
   // import '../assets/js/cv_dev.js'
   // console.log(findIndexIsNotZero)
+  import  {b64_to_imageData} from "../assets/js/cv_dev.js"
 
   export default{
     created(){
@@ -203,11 +204,10 @@
         this.image_wo_label = image_wo_label;
       },
       start_label(){
-        // console.log('触发回车');
-        // console.log(imageData2dataUrl(this.image_wo_label));
         let img_b64 = imageData2dataUrl(this.image_wo_label);
-        let image_temp = this.$refs.test_image;
-
+        let canvas_element = this.$refs.label_panel_canvas;
+        let image_original = this.image_wo_label;
+        let real_this = this;
         let data = {
             image: img_b64,
             pos_points : this.label_params.pos_points.value,
@@ -221,10 +221,15 @@
           contentType:'application/json', // 为了保证flask里可以用request.json
           data: data_obj,
           success: function (mask){
-            // console.log('ajax成功',mask);
-            // console.log("2,",image_temp)
-            // image_temp.src = mask;
-            update_current_labeled_b64(mask);
+            real_this.update_current_labeled_b64(mask);
+            // console.log("一阶段完成")
+            let promise_temp =  b64_to_imageData(mask);
+            let mask_temp = ""; 
+            promise_temp.then(function(result){
+              mask_temp = result;
+            })
+            console.log("data", mask_temp);
+
             }
         })
 
