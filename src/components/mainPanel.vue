@@ -94,7 +94,7 @@
         disabled:false,
         images_selected:[],
         label_panel_src,
-        label_panel_init_class:new EArray(["fat","content-horizontal-center","unvisible"])
+        label_panel_init_class:new EArray(["fat","content-horizontal-center","unvisible"]),
       }
     },
     methods: {

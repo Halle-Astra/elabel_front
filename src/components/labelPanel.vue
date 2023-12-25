@@ -16,7 +16,7 @@
     </canvas>
 
   </div>
-  <img ref="test_image" :src="src"/>
+  <!-- <img ref="test_image" :src="src"/> -->
   <!-- <a>{{src}}</a> -->
 </div>
 </template>
@@ -85,7 +85,8 @@
           pos_points: new EasyArray([]),
           neg_points: new EasyArray([])
         },
-        image_wo_label:null
+        image_wo_label:null,
+        current_labeled_b64 : ""
       }
     },
     props: {
@@ -206,7 +207,7 @@
         // console.log(imageData2dataUrl(this.image_wo_label));
         let img_b64 = imageData2dataUrl(this.image_wo_label);
         let image_temp = this.$refs.test_image;
-        console.log(image_temp);
+
         let data = {
             image: img_b64,
             pos_points : this.label_params.pos_points.value,
@@ -220,12 +221,16 @@
           contentType:'application/json', // 为了保证flask里可以用request.json
           data: data_obj,
           success: function (mask){
-            console.log('ajax成功',mask);
-            console.log("2,",image_temp)
-            image_temp.src = mask;
+            // console.log('ajax成功',mask);
+            // console.log("2,",image_temp)
+            // image_temp.src = mask;
+            update_current_labeled_b64(mask);
             }
         })
 
+      },
+      update_current_labeled_b64(result){ //方便更新一些变量，这是临时方案，估计要存的变量还是不少的，所以还是用一个对象存比较好
+        this.current_labeled_b64 = result;
       }
     },
     computed:{
