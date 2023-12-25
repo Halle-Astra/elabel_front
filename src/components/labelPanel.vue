@@ -223,12 +223,17 @@
           success: function (mask){
             real_this.update_current_labeled_b64(mask);
             // console.log("一阶段完成")
-            let promise_temp =  b64_to_imageData(mask);
-            let mask_temp = ""; 
-            promise_temp.then(function(result){
-              mask_temp = result;
+            // let promise_temp =   b64_to_imageData(mask);
+            // let mask_temp = "";
+            // promise_temp.then(function(result){
+            //   mask_temp = result;
+            // })
+            // mask_temp = promise_temp;
+            // console.log("data", mask_temp);
+            let mask_promise = b64_to_imageData(mask);
+            mask_promise.then(result=> { // 得，记起来这个promise的特点和用法了，这种不彻底的回调地狱！
+              console.log('data', result)
             })
-            console.log("data", mask_temp);
 
             }
         })

@@ -40,7 +40,7 @@ export async function b64_to_imageData(image_str){
   // }
   let result = "";
   let loaded_flag = false;
-  let promise_onload = new Promise(()=>{
+  let promise_onload = new Promise((resolve)=>{
     image.onload = async function(){
         let can_temp = document.createElement("canvas");
         let ctx = can_temp.getContext('2d');
@@ -49,7 +49,9 @@ export async function b64_to_imageData(image_str){
         result = image_data;
         loaded_flag=true;
         console.log("原生的高度", image.naturalWidth, image.naturalHeight);
+        resolve(result);
       }
+
   });
 
 
@@ -65,6 +67,7 @@ export async function b64_to_imageData(image_str){
   // }
   image.src = image_str;
   await promise_onload;
+  // return promise_onload;
   return result;
   // while (1){
   //   if (loaded_flag){return result;}
