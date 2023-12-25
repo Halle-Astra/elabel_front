@@ -14,7 +14,9 @@
       >
 
     </canvas>
+
   </div>
+  <img ref="test_image" :src="src"/>
   <!-- <a>{{src}}</a> -->
 </div>
 </template>
@@ -203,6 +205,8 @@
         // console.log('触发回车');
         // console.log(imageData2dataUrl(this.image_wo_label));
         let img_b64 = imageData2dataUrl(this.image_wo_label);
+        let image_temp = this.$refs.test_image;
+        console.log(image_temp);
         let data = {
             image: img_b64,
             pos_points : this.label_params.pos_points.value,
@@ -215,7 +219,11 @@
           // dataType:'json',
           contentType:'application/json', // 为了保证flask里可以用request.json
           data: data_obj,
-          success: function (e){console.log('ajax成功',e)}
+          success: function (mask){
+            console.log('ajax成功',mask);
+            console.log("2,",image_temp)
+            image_temp.src = mask;
+            }
         })
 
       }
@@ -271,7 +279,7 @@ function imageData2dataUrl(imageData){
 .fat {
   width: 100%;
   height: 100%;
-  background-color: red;
+  /* background-color: red; */
 }
 
 .content-horizontal-center{
