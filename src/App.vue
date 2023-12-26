@@ -1,7 +1,7 @@
 <template>
-  <el-col span=24>
+  <el-col :span="24">
     <el-row>
-      <el-col :span=24>
+      <el-col :span="24">
         <navi/>
       </el-col>
     </el-row>
@@ -10,7 +10,7 @@
 
 
     <el-row type="flex" justify="center" >
-      <el-col span=24 >
+      <el-col :span="24" >
 
           <!-- <el-aside width="200px">Aside</el-aside> -->
           <!-- <el-container> -->

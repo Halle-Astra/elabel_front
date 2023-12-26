@@ -16,14 +16,14 @@
     </canvas>
 
   </div>
-  <div class="content-horizontal-center">
-      <img ref="test_image" :src="src"/>
-      <!-- <canvas ref="temp" ></canvas> -->
-    </div>
-  <div class="content-horizontal-center">
+  <!-- <div class="content-horizontal-center"> -->
       <!-- <img ref="test_image" :src="src"/> -->
-      <canvas ref="temp" ></canvas>
-  </div>
+      <!-- <canvas ref="temp" ></canvas> -->
+    <!-- </div> -->
+  <!-- <div class="content-horizontal-center"> -->
+      <!-- <img ref="test_image" :src="src"/> -->
+      <!-- <canvas ref="temp" ></canvas> -->
+  <!-- </div> -->
   <!-- <a>{{src}}</a> -->
 </div>
 
@@ -223,6 +223,7 @@
             neg_points : this.label_params.neg_points.value
           };
         let data_obj = JSON.stringify(data);   // flask接收到json的核心代码，这样子，flask不能再使用request.values,而要使用request.json
+        console.log('已通知服务器开始标注')
         $.ajax({
           url:"http://localhost:5000/label.online/sam/upload",
           type:'post',
@@ -230,7 +231,8 @@
           contentType:'application/json', // 为了保证flask里可以用request.json
           data: data_obj,
           success: function (mask){
-            image_temp.src = mask;
+            console.log("服务器标注完成")
+            // image_temp.src = mask;
             // image_temp.style.display='none';
             real_this.update_current_labeled_b64(mask);
             // console.log("一阶段完成")
@@ -246,10 +248,10 @@
               console.log('data', result) //这时候是一个预期的imageData了, 但是因为经过canvas，所以是一个4通道的。
               // real_this.$refs.temp.getContext('2d').putImageData(result, 0,0/*  */)
               // let colormask = mask2colormask(result);
-              real_this.$refs.temp.width = result.width;
-              real_this.$refs.temp.height =  result.height;
-              real_this.$refs.temp.getContext('2d').putImageData(result,0,0);
-              let image_with_label = addMask(image_original, result,[0,255,0]);
+              // real_this.$refs.temp.width = result.width;
+              // real_this.$refs.temp.height =  result.height;
+              // real_this.$refs.temp.getContext('2d').putImageData(result,0,0);
+              let image_with_label = addMask(image_original, result,[0,8,95]);
               canvas_element.getContext('2d').putImageData(image_with_label,0,0);
               console.log("图像融合结束")
             })
