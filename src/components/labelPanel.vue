@@ -8,8 +8,8 @@
   <!-- 目前canvas的这两个class先放着，以后再思考怎么利用 -->
     <canvas class="label_panel_center w90"
       ref='label_panel_canvas'
-      @click="add_pos"
-      @dblclick="add_neg"
+      @click="oneclick"
+      @dblclick="dblclick"
 
       >
 
@@ -95,7 +95,8 @@
           neg_points: new EasyArray([])
         },
         image_wo_label:null,
-        current_labeled_b64 : ""
+        current_labeled_b64 : "",
+        timer : null
       }
     },
     props: {
@@ -190,6 +191,17 @@
         let ctx = canvas_element.getContext('2d');
         this.canvas_draw_points(ctx);
       },
+      oneclick(point_event){
+        clearTimeout(this.timer);
+        let real_this = this;
+        this.timer = setTimeout(function(){
+          real_this.add_pos(point_event);
+        },300)
+      },
+      dblclick(point_event){
+        clearTimeout(this.timer);
+        this.add_neg(point_event);
+      },
       canvas_draw_points(ctx){
         //既然都已经所有点都重绘了，不如就干脆一开始就重绘原图
         var canvas_element = this.$refs.label_panel_canvas;
@@ -215,6 +227,7 @@
         let img_b64 = imageData2dataUrl(this.image_wo_label);
         let canvas_element = this.$refs.label_panel_canvas;
         let image_original = this.image_wo_label;
+        let image_with_points = canvas_element.getContext('2d').getImageData(0,0,image_original.width, image_original.height);
         let image_temp = this.$refs.test_image;
         let real_this = this;
         let data = {
@@ -225,7 +238,7 @@
         let data_obj = JSON.stringify(data);   // flask接收到json的核心代码，这样子，flask不能再使用request.values,而要使用request.json
         console.log('已通知服务器开始标注')
         $.ajax({
-          url:"http://localhost:5000/label.online/sam/upload",
+          url:"http://ai-universe.cn:64942/label.online/sam/upload",
           type:'post',
           // dataType:'json',
           contentType:'application/json', // 为了保证flask里可以用request.json
@@ -251,7 +264,7 @@
               // real_this.$refs.temp.width = result.width;
               // real_this.$refs.temp.height =  result.height;
               // real_this.$refs.temp.getContext('2d').putImageData(result,0,0);
-              let image_with_label = addMask(image_original, result,[0,8,95]);
+              let image_with_label = addMask(image_with_points, result,[0,8,95]);
               canvas_element.getContext('2d').putImageData(image_with_label,0,0);
               console.log("图像融合结束")
             })
