@@ -108,7 +108,14 @@
       }
     },
     methods:{
+      init_label_params(){
+        this.label_params={
+          pos_points: new EasyArray([]),
+          neg_points: new EasyArray([])
+        }
+      },
       canvas_show (){
+        this.init_label_params();
         var image_helper = this.$refs.img_label_panel1;
         var canvas_element = this.$refs.label_panel_canvas;
         let image_wo_label = this.image_wo_label;
@@ -125,6 +132,7 @@
           var original_hwratio = original_height/original_width;
           var resized_height = 0;
           var resized_width = 0;
+          
           if (original_hwratio>container_hwratio){
             resized_height = container_height;
             resized_width = resized_height/original_hwratio;
