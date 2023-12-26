@@ -30,7 +30,7 @@ function alphaBlend(image1, image2){
 
 }
 
-export async function b64_to_imageData(image_str){
+export function b64_to_imageData(image_str){
   // 此函数的传入必须自带data:image头
   let image = document.createElement('img');
   // image.style.display = "none";
@@ -41,16 +41,21 @@ export async function b64_to_imageData(image_str){
   let result = "";
   let loaded_flag = false;
   let promise_onload = new Promise((resolve)=>{
-    image.onload = async function(){
+    image.onload =  function(){
         let can_temp = document.createElement("canvas");
         let ctx = can_temp.getContext('2d');
+        can_temp.height = image.height; 
+        can_temp.width = image.width;
         ctx.drawImage(image, 0,0, image.naturalWidth, image.naturalHeight);
-        let image_data = ctx.getImageData(0,0,image.width, image.height);
+        let image_data = ctx.getImageData(0,0,image.naturalWidth, image.naturalHeight);
         result = image_data;
         loaded_flag=true;
         console.log("原生的高度", image.naturalWidth, image.naturalHeight);
+        console.log('普通高度',image.width, image.height)
         resolve(result);
       }
+  // image.src = image_str;
+  // return promise_onload;
 
   });
 
@@ -66,9 +71,10 @@ export async function b64_to_imageData(image_str){
 
   // }
   image.src = image_str;
-  await promise_onload;
+  // await promise_onload;
   // return promise_onload;
-  return result;
+  // return result;
+  return promise_onload;
   // while (1){
   //   if (loaded_flag){return result;}
   // }
@@ -77,7 +83,47 @@ export async function b64_to_imageData(image_str){
   //     return result;
   //   }
   // },20);
-
-
 }
 
+export function mask2colormask(mask_imageData, color){ // 将黑白图变成彩色图
+  // console.log(mask_imageData.data.length);
+  let colormask_array = new Uint8ClampedArray(mask_imageData.data);
+  let colormask = new ImageData(colormask_array, mask_imageData.width, mask_imageData.height);
+  // console.log(colormask);
+  for (i = 0; i<mask_imageData.length; i+4){
+    if (mask_imageData.data[i] > 0){
+      colormask.data[i] = color[0] ;
+      colormask.data[i+1] = color[1];
+      colormask.data[i+2] = color[2];
+      colormask.data[i+3] = mask_imageData.data[i];
+    }
+    else{
+      colormask.data[i+3] = 0;
+    }
+  }
+  return colormask;
+}
+
+export function addMask(image, mask_imageData, color){ // 这里的mask_imageData是<h,w>
+  console.log(image.data.length, mask_imageData.data.length)
+  let image_new = new Uint8ClampedArray(image.data);
+  let result = new ImageData(image_new, mask_imageData.width, mask_imageData.height);
+  for (let i = 0; i<image.data.length;i= i+4){
+    // console.log(mask_imageData.data[i/4])
+    if (mask_imageData.data[i] > 0){
+      // console.log(i)
+      // console.log(result.data[i])
+      result.data[i] = result.data[i]+color[0]  ;
+      // console.log(result.data[i])
+      result.data[i+1] = result.data[i+1]+color[1];
+      result.data[i+2] = result.data[i+2]+color[2];
+      // console.log("more jmore /* */")
+      // result.data[i+3] = mask_imageData.data[i];
+    }
+    // else{
+    //   result.data[i+3] = 0;
+    // }
+  }
+
+  return result;
+}
