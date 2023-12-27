@@ -132,7 +132,7 @@
           var original_hwratio = original_height/original_width;
           var resized_height = 0;
           var resized_width = 0;
-          
+
           if (original_hwratio>container_hwratio){
             resized_height = container_height;
             resized_width = resized_height/original_hwratio;
@@ -152,10 +152,13 @@
         }
       },
       add_pos(point_event){
+
+        // console.log('point ',point)
         $('body')[0].classList.add('cannot_select');
 
         const x = point_event.offsetX;
         const y = point_event.offsetY;
+        console.log('point,,,',x,y)
         // 简单的增加样本点可以用[x,y]，因为不涉及索引问题
         if (!is_in_points([x,y], this.label_params.pos_points)){
           this.label_params.pos_points.add([x,y]);
@@ -176,6 +179,7 @@
 
       },
       add_neg(point_event){
+        $('body')[0].classList.add('cannot_select');
         // var canvas_element = this.$refs.label_panel_canvas;
         const x = point_event.offsetX;
         const y = point_event.offsetY;
@@ -187,6 +191,8 @@
         }
 
         let point = [x,y];
+        console.log('point,,,',x,y)
+        console.log(point_event)
         let site_point_in_pos = this.label_params.pos_points.indexOf(point);
         while (site_point_in_pos>-1){
           this.label_params.pos_points.removeByIndex(site_point_in_pos);
@@ -200,13 +206,17 @@
         this.canvas_draw_points(ctx);
       },
       oneclick(point_event){
+        this.cur_point = point_event;
         clearTimeout(this.timer);
         let real_this = this;
+        console.log('--------------------------\n发生了单击ms:', new Date(),new Date().getMilliseconds())
         this.timer = setTimeout(function(){
           real_this.add_pos(point_event);
         },300)
       },
       dblclick(point_event){
+        point_event = this.cur_point;
+        console.log('发生了双击ms:', new Date(),new Date().getMilliseconds())
         clearTimeout(this.timer);
         this.add_neg(point_event);
       },
