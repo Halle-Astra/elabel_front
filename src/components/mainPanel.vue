@@ -44,7 +44,8 @@
     </el-dialog> -->
     <!-- label_panel_src要记得放进export default里 -->
     <labelPanel :src="label_panel_src"  ref='main_label_panel'
-      :component_class="label_panel_init_class"/>
+      :component_class="label_panel_init_class"
+      @label_finished="show_preview"/>
   </el-main>
   <el-aside width=20%>
     <!-- <el-col span=24>
@@ -69,7 +70,15 @@
           </div>
         </el-upload>
       </div>
-      <div  class="right-row unvisible" @click="start_label" ref="main_panel_label_button"><el-button style="width:100%" >开始标注</el-button></div>
+      <div  class="right-row unvisible" @click="start_label" ref="main_panel_label_button">
+        <el-button style="width:100%" >开始标注</el-button>
+      </div>
+      <div class="right-row unvisible" ref="preview_block">
+        <canvas ref="download_preview"></canvas>
+        <div style="width:100%" @click="download_segmented">
+          <el-button style="width:100%">下载</el-button>
+        </div>
+      </div>
      <!-- </el-col>
   </el-col> -->
   </el-aside>
@@ -84,6 +93,7 @@
   import labelPanel from "./labelPanel.vue";
 
   import Vue from "vue";
+  import {segment_labeled_4c} from "../assets/js/cv_dev.js";
   Vue.component("labelPanel", labelPanel)
   // Vue.component()
   console.log('the labelpanel')
@@ -107,6 +117,58 @@
           start_label(){
             // console.log(labelPanel);
             this.$refs.main_label_panel.start_label();
+
+          },
+          show_preview(){
+            console.log("触发show_preview")
+            this.$refs.preview_block.classList.remove('unvisible');
+            let can_temp = document.createElement('canvas');//this.$refs.download_preview;
+            let ctx = can_temp.getContext('2d');
+            let image_original = this.$refs.main_label_panel.image_wo_label;
+            let labeled_image_data = this.$refs.main_label_panel.labeled_image_data;
+            let image_preview=segment_labeled_4c(image_original,labeled_image_data);
+
+            let button_ref = this.$refs.main_panel_label_button;
+            // resize
+            let w=button_ref.clientWidth;
+            let o_w=image_preview.width;
+            let o_h=image_preview.height;
+            let h=o_h/o_w*w;
+            can_temp.width=o_w;
+            can_temp.height=o_h;
+            ctx.putImageData(image_preview, 0,0);
+
+            let image_preview_b64 = can_temp.toDataURL();
+            // ctx.putImageData(image_preview,0,0);
+            let img_temp = new Image();
+            let real_this = this;
+            img_temp.onload = function(){
+              let can_temp = real_this.$refs.download_preview;
+              let ctx = can_temp.getContext('2d');
+              can_temp.width = w;
+              can_temp.height = h;
+              ctx.drawImage(img_temp,0,0,w,h);
+            };
+
+            img_temp.src = image_preview_b64;
+
+
+
+
+
+            this.segmented=image_preview;
+
+          },
+          download_segmented(){
+            let blob=new Blob(this.segmented.data.buffer(),{type:"image/png"});
+            let object_url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = object_url;
+            a.download = "download.png";
+            a.style.display="none";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
           },
           handleRemove(file, fileList) {
             console.log("handle Remove",file, fileList);
@@ -140,6 +202,7 @@
             $("#main_upload_box")[0].classList.add("unvisible");
             $("#aside_upload_box")[0].classList.remove("unvisible");
             this.$refs.main_panel_label_button.classList.remove('unvisible');
+            // this.$refs.preview_block.classList.remove('unvisible');
             console.log('refs',this.$refs.main_label_panel);
             console.log('refs',this.$refs.main_label_panel.classList);
             console.log(this.$refs.main_label_panel.component_class);

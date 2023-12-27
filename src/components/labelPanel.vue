@@ -96,7 +96,8 @@
         },
         image_wo_label:null,
         current_labeled_b64 : "",
-        timer : null
+        timer : null,
+        labeled_image_data:null
       }
     },
     props: {
@@ -261,6 +262,7 @@
           // dataType:'json',
           contentType:'application/json', // 为了保证flask里可以用request.json
           data: data_obj,
+
           success: function (mask){
             console.log("服务器标注完成")
             // image_temp.src = mask;
@@ -284,7 +286,11 @@
               // real_this.$refs.temp.getContext('2d').putImageData(result,0,0);
               let image_with_label = addMask(image_with_points, result,[0,8,95]);
               canvas_element.getContext('2d').putImageData(image_with_label,0,0);
-              console.log("图像融合结束")
+              console.log("图像融合结束");
+
+              real_this.labeled_image_data = result;
+              console.log("即将触发show_preview")
+              real_this.$emit("label_finished");
             })
 
             }

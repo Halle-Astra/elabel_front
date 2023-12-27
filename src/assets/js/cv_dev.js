@@ -26,9 +26,9 @@ function findIndicesAreNotZero(int8Array){
 
 
 
-function alphaBlend(image1, image2){
+// function alphaBlend(image1, image2){
 
-}
+// }
 
 export function b64_to_imageData(image_str){
   // 此函数的传入必须自带data:image头
@@ -44,7 +44,7 @@ export function b64_to_imageData(image_str){
     image.onload =  function(){
         let can_temp = document.createElement("canvas");
         let ctx = can_temp.getContext('2d');
-        can_temp.height = image.height; 
+        can_temp.height = image.height;
         can_temp.width = image.width;
         ctx.drawImage(image, 0,0, image.naturalWidth, image.naturalHeight);
         let image_data = ctx.getImageData(0,0,image.naturalWidth, image.naturalHeight);
@@ -126,4 +126,14 @@ export function addMask(image, mask_imageData, color){ // 这里的mask_imageDat
   }
 
   return result;
+}
+
+
+export function segment_labeled_4c(image,labeled){
+  let result = new Uint8ClampedArray(image.data);
+  for ( let ii = 0; ii < result.length;ii+=4){
+    result[ii+4]=labeled.data[ii];
+  }
+  result = new ImageData(result, image.width, image.height);
+  return  result;
 }
