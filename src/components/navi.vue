@@ -1,7 +1,7 @@
 <template>
   <el-header>
     <el-row id="navi" :gutter="10">
-      <el-col v-for="header in headers"  :key="header.name" :span="2"> <!-- 为什么非得要加冒号和引号呢， 可能加了：就会把引号里的东西当变量，而数字不是变量，就变成数字而非字符串了 -->
+      <el-col v-for="header in headers"  :key="header.name" :lg="2" :md="6"> <!-- 为什么非得要加冒号和引号呢， 可能加了：就会把引号里的东西当变量，而数字不是变量，就变成数字而非字符串了 -->
         <el-card shadow="hover">  <a v-bind:href="header.href">{{header.name}}</a></el-card>
       </el-col>
     </el-row>

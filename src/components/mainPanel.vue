@@ -49,7 +49,8 @@
   <el-aside width=20%>
     <!-- <el-col span=24>
       <el-col span=22> -->
-      <div style="width:80%; margin-left:10%; margin-right:10%;">
+      <div class="right-row">
+      <!-- <div style="width:80%; margin-left:10%; margin-right:10%;"> -->
         <el-upload
           action="http://localhost:5000/label.online/upload"
           :on-remove="handleRemove"
@@ -68,6 +69,7 @@
           </div>
         </el-upload>
       </div>
+      <div  class="right-row unvisible" @click="start_label" ref="main_panel_label_button"><el-button style="width:100%" >开始标注</el-button></div>
      <!-- </el-col>
   </el-col> -->
   </el-aside>
@@ -80,6 +82,7 @@
 
   import $ from "jquery";
   import labelPanel from "./labelPanel.vue";
+
   import Vue from "vue";
   Vue.component("labelPanel", labelPanel)
   // Vue.component()
@@ -97,7 +100,14 @@
         label_panel_init_class:new EArray(["fat","content-horizontal-center","unvisible"]),
       }
     },
+    // components:{
+    //   label_panel: labelPanel
+    // },
     methods: {
+          start_label(){
+            // console.log(labelPanel);
+            this.$refs.main_label_panel.start_label();
+          },
           handleRemove(file, fileList) {
             console.log("handle Remove",file, fileList);
           },
@@ -129,6 +139,7 @@
             console.log(pointer_event);
             $("#main_upload_box")[0].classList.add("unvisible");
             $("#aside_upload_box")[0].classList.remove("unvisible");
+            this.$refs.main_panel_label_button.classList.remove('unvisible');
             console.log('refs',this.$refs.main_label_panel);
             console.log('refs',this.$refs.main_label_panel.classList);
             console.log(this.$refs.main_label_panel.component_class);
@@ -234,6 +245,10 @@
   display:none;
 }
 
-
+.right-row {
+  width:80%; margin-left:10%; margin-right:10%;
+  margin-top:10px;
+  margin-bottom:10px;
+}
 
 </style>
