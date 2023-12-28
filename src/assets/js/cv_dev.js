@@ -132,7 +132,7 @@ export function addMask(image, mask_imageData, color){ // 这里的mask_imageDat
 export function segment_labeled_4c(image,labeled){
   let result = new Uint8ClampedArray(image.data);
   for ( let ii = 0; ii < result.length;ii+=4){
-    result[ii+4]=labeled.data[ii];
+    result[ii+3]=labeled.data[ii];
   }
   result = new ImageData(result, image.width, image.height);
   return  result;

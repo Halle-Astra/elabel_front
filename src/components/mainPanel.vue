@@ -160,8 +160,16 @@
 
           },
           download_segmented(){
-            let blob=new Blob(this.segmented.data.buffer(),{type:"image/png"});
+            let blob=new Blob([this.segmented.data.buffer],{type:"image/png"});
             let object_url = URL.createObjectURL(blob);
+            let can_temp=document.createElement('canvas');
+            can_temp.width=this.segmented.width;
+            can_temp.height=this.segmented.height;
+            
+            can_temp.getContext('2d').putImageData(this.segmented,0,0);
+            object_url=can_temp.toDataURL();
+
+            console.log(object_url)
             let a = document.createElement('a');
             a.href = object_url;
             a.download = "download.png";
