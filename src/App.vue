@@ -18,7 +18,12 @@
       </el-col>
     </el-row>
 
-
+    <el-row>
+       <div style="float:right">
+            <!-- 版权内容请在本组件"内容配置-版权"处填写 -->
+            <p>Copyright © 版权所有：星星哎/王精东 &nbsp;<a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备xxx号</a></p>
+       </div>
+    </el-row>
         <!-- <el-container>
           <el-footer>Footer</el-footer>
         </el-container> -->
